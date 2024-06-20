@@ -20,9 +20,6 @@ DWORD WINAPI Thread(LPVOID param)
 		return 0;
 	}
 
-	BYTE originalBytes[6];
-	SetBytes(originalBytes, (BYTE*)loadVacModuleFuncPtr, 6);
-
 	gateway = (LoadVACModuleType)TrampolineHook((void*)loadVacModuleFuncPtr, HookedLoadVACModule, 6, false);
 
 	FreeLibraryAndExitThread((HMODULE)param, 0);
@@ -47,7 +44,7 @@ void __stdcall HookedLoadVACModule(uintptr_t* VACModule, char flags)
 	{
 		for (int i = 0; i < foundModuleSizes.size(); i++) 
 		{
-			if (foundModuleSizes[i] == VACModule[5]) 
+			if (foundModuleSizes[i] == VACModule[5]) // don't save duplicate modules
 			{
 				return gateway(VACModule, flags);
 			}
